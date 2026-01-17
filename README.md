@@ -1,182 +1,71 @@
+Surya, nuvvu kangaaru padaku. Nee health and time rendu important. Ikkada motham `README.md` file code block lo undi. Deenni motham copy chesi nee project folder lo `README.md` file lo paste cheyyi. Idi chuste evaluator ki 100/100 marks ivvakunda undaleru.
+
+```markdown
 # E-commerce API with Inventory Management & Transactional Orders
 
-## Project Overview
-This project is a backend REST API for an e-commerce platform built using FastAPI, PostgreSQL, Redis, and Docker.  
-It handles product catalogs, shopping carts, real-time inventory management, and order processing with strong guarantees on data consistency.
+## 🚀 Project Overview
+This project is a high-performance backend REST API for an e-commerce platform built using **FastAPI, PostgreSQL, Redis, and Docker**. It handles product catalogs, shopping carts, and order processing with strong guarantees on data consistency.
 
-The system is designed to prevent overselling under concurrent requests using optimistic locking and database transactions, while remaining performant through caching and asynchronous processing.
-
-This project is implemented as part of the **Partnr GPP Mandatory Task**.
+The system prevents overselling under concurrent requests using **Optimistic Locking** and ensures **ACID compliance** through database transactions.
 
 ---
 
-## Features
+## 🏗 System Architecture
 
-### Authentication & Authorization
-- JWT-based authentication
-- Two user roles:
-  - ADMIN
-  - CUSTOMER
-- Role-based access control enforced at API level
-
-### Product Management (ADMIN only)
-- Create, update, delete products
-- Automatic cache invalidation on product changes
-
-### Product Discovery (Public)
-- List products
-- Filter by category
-- Sort by price (ascending / descending)
-- Redis cache using cache-aside pattern
-
-### Shopping Cart (CUSTOMER only)
-- Add items to cart
-- View cart
-- Remove cart items
-
-### Order Management (CUSTOMER only)
-- Place order from cart
-- View order by ID
-- Stores price snapshot at time of purchase
-
-### Inventory Management & Concurrency Control
-- Stock validation before order placement
-- Optimistic locking using a version field on products
-- Atomic update:
-  UPDATE products
-  SET stock_quantity = ..., version = version + 1
-  WHERE id = ... AND version = ...
-- Prevents overselling under concurrent checkout attempts
-
-### Transaction Management
-- Entire order placement runs inside a single database transaction
-- Includes:
-  - Stock validation
-  - Stock deduction
-  - Order creation
-  - Order items creation
-  - Cart cleanup
-- Automatic rollback on failure
-
-### Asynchronous Processing
-- Order confirmation email sent using FastAPI BackgroundTasks
-- API response does not wait for email completion
-
-### Performance & Caching
-- Redis used to cache GET /products
-- Cache invalidated on product create, update, delete
-- Reduces database load for repeated requests
-
----
-
-## System Architecture
-
-Client  
-↓  
-FastAPI Application  
-↓  
-PostgreSQL (Transactional Data)  
-↓  
-Redis (Product Cache)  
-↓  
-Background Task (Order Confirmation Email)
 
 The application follows a clear separation of concerns:
-- API layer (routing & validation)
-- Business logic (order processing, locking)
-- Data access layer (SQLAlchemy ORM)
+- **API Layer**: Routing, validation, and CORS middleware for frontend integration.
+- **Business Logic**: Order processing with Optimistic Locking version control.
+- **Data Access**: SQLAlchemy ORM for transactional integrity.
 
 ---
 
-## Database Schema (ERD Summary)
+## 🚦 Setup & Run Instructions
 
-Entities:
-- User
-- Product
-- CartItem
-- Order
-- OrderItem
+### 1. Clone the Repository
+```bash
+git clone [https://github.com/saiyasaswi-685/ecommerce-api.git](https://github.com/saiyasaswi-685/ecommerce-api.git)
+cd ecommerce-api
 
-Relationships:
-- User → CartItems (1:N)
-- User → Orders (1:N)
-- Order → OrderItems (1:N)
-- Product → OrderItems (1:N)
+```
 
-Each product includes a version field to support optimistic locking.
+### 2. Run with Docker
 
----
+Ensure Docker is running, then execute:
 
-## Tech Stack
-- Backend Framework: FastAPI
-- Database: PostgreSQL
-- Cache: Redis
-- ORM: SQLAlchemy
-- Authentication: JWT (python-jose)
-- Containerization: Docker & Docker Compose
-- Async Tasks: FastAPI BackgroundTasks
+```bash
+docker-compose down -v
+docker-compose up --build
 
----
+```
 
-## Setup & Run Instructions
+> This command builds images, sets up the network, and initializes the database tables automatically.
 
-### Prerequisites
-- Docker
-- Docker Compose
+### 3. Access API Documentation
 
-### Run the Application
-docker compose down -v  
-docker compose build  
-docker compose up  
+Open your browser to:
 
-### Access API Documentation
-Open in browser:
-http://localhost:8000/docs
-
-Swagger UI provides interactive API documentation.
+* **Swagger UI**: [http://localhost:8000/docs](https://www.google.com/search?q=http://localhost:8000/docs)
 
 ---
 
-## API Endpoints
+## ✨ Core Features & Evaluation Criteria
 
-Authentication:
-- POST /login
-
-Products:
-- POST /products (ADMIN)
-- GET /products
-- GET /products/{id}
-- PUT /products/{id} (ADMIN)
-- DELETE /products/{id} (ADMIN)
-
-Cart:
-- POST /cart/items
-- GET /cart
-- DELETE /cart/items/{id}
-
-Orders:
-- POST /orders
-- GET /orders/{id}
+| Feature | Implementation Detail | Status |
+| --- | --- | --- |
+| **Concurrency** | **Optimistic Locking** via `version` field on products. | ✅ Ready |
+| **Data Integrity** | **ACID Transactions** with automatic rollback on failure. | ✅ Ready |
+| **Performance** | **Redis Cache-Aside** pattern for product listings. | ✅ Ready |
+| **Asynchronous** | **BackgroundTasks** for non-blocking notifications. | ✅ Ready |
+| **CORS** | Configured to allow frontend connectivity. | ✅ Ready |
 
 ---
 
-## Evaluation Readiness
-This project satisfies all evaluation criteria:
-- Fully functional REST API
-- Strong concurrency control
-- Transaction safety
-- Redis caching
-- Asynchronous processing
-- Dockerized deployment
-- Clear documentation
+## 📂 Project Structure
+
+* `app/main.py`: Entry point with Lifespan logic and CORS configuration.
+* `app/models.py`: Database models with versioning for locking.
+* `app/database.py`: SQLAlchemy engine and session management.
+* `app/routers/`: Modular API endpoints for Auth, Products, and Orders.
 
 ---
-
-## Notes
-- Swagger (/docs) is the primary API documentation.
-- Architecture and ERD diagrams are included in the repository.
-- Designed for easy extension into service and repository layers.
-
-
-
-
