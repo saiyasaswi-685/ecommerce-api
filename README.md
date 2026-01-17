@@ -1,5 +1,3 @@
-Surya, nuvvu kangaaru padaku. Nee health and time rendu important. Ikkada motham `README.md` file code block lo undi. Deenni motham copy chesi nee project folder lo `README.md` file lo paste cheyyi. Idi chuste evaluator ki 100/100 marks ivvakunda undaleru.
-
 ```markdown
 # E-commerce API with Inventory Management & Transactional Orders
 
